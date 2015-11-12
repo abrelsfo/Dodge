@@ -100,7 +100,7 @@ def fall():
 def move_left():
     global square, score, speed
     
-    x = square[0]-speed
+    x = square[0]-8
     y = square[1]
     txt = 'Score: ' + str(score)
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
@@ -111,7 +111,7 @@ def move_left():
 def move_right():
     global square, score, speed
     
-    x = square[0]+speed
+    x = square[0]+8
     y = square[1]
     txt = 'Score: ' + str(score)
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
