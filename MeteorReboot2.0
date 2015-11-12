@@ -1,0 +1,185 @@
+from random import randint
+import numpy as np
+import cv2
+import sys
+import time
+
+squares = []
+square = (512,1012)
+score = 0
+speed = 8
+multiplier = 1
+multi_count = 0
+line_count = 0
+lines_up = False
+drop_speed = 5
+drop_count = 0
+
+def intersect(square1):
+    global multiplier, multi_count, line_count, lines_up, drop_speed
+    
+    if abs(square1[0]-square[0]) < 18 and abs(square1[1]-square[1]) < 18:
+        if square1[2] == 1:
+            multi_count = 0
+            multiplier = 2
+        elif square1[2] == 2:
+            line_count = 0
+            lines_up = True
+        elif square1[2] == 3:
+            drop_speed = 7
+        else:
+            return True
+    return False    
+ 
+def drop():
+    global squares, lines_up, score
+    
+    c = randint(1,1024)
+    score += (1*multiplier)
+    if c%50 == 0:
+        typ = 3
+    elif c%30 == 0:
+        typ = 1
+    elif c%20 == 0:
+        typ = 2
+    else:
+        typ = 0
+        
+    if typ == 1:    #Bonus
+        cv2.rectangle(img,(c-6,0),(c+6,12),(255,255,255),1)
+        if lines_up == True:
+            line(c-6, 0, square[0], square[1], 255, 255, 255)
+    elif typ == 2:  #Lines
+        cv2.rectangle(img,(c-6,0),(c+6,12),(232,226,61),1)
+        if lines_up == True:
+            cv2.rectangle(img,(c-6,0),(c+6,12),(232,226,61),1)
+    elif typ == 3:  #Lines
+        cv2.rectangle(img,(c-6,0),(c+6,12),(0,0,255),-1)
+        if lines_up == True:
+            cv2.rectangle(img,(c-6,0),(c+6,12),(0,0,255),1)
+    else:   #Normal
+        cv2.rectangle(img,(c-6,0),(c+6,12),(255,0,255),1)
+        if lines_up == True:
+            cv2.rectangle(img,(c-6,0),(c+6,12),(255,0,255),1)
+    squares.append([c,6,typ])
+    
+def fall():
+    global squares, square, score
+
+    x = square[0]
+    y = square[1]
+    count = 0
+    txt = 'Score: ' + str(score)
+    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+    cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
+    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+    
+    for i in xrange(len(squares)):
+        i = i-count
+        x = squares[i][0]
+        y = squares[i][1]
+
+        if intersect(squares[i]):
+            print "Game Over"
+            print 'Score: ' + str(score) 
+            cv2.destroyAllWindows()
+            sys.exit(1)
+            
+        if y < 1030:
+            squares[i][1] += drop_speed
+            if squares[i][2] == 1:
+                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(255,255,255),1)
+                if lines_up:
+                    line(x,y,square[0], square[1],255,255,255)
+            elif squares[i][2] == 2:  #Lines
+                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(232,226,61),1)
+                if lines_up == True:
+                    line(x,y,square[0], square[1],232,226,61)
+            elif squares[i][2] == 3:  #Lines
+                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(0,0,255),-1)
+                if lines_up == True:
+                    line(x,y,square[0], square[1],0,0,255)
+            else:
+                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(255,0,255),1)
+                if lines_up:
+                    line(x,y,square[0], square[1],255,0,255)
+        else:
+            count += 1
+            del squares[i]
+
+def move_left():
+    global square, score, speed
+    
+    x = square[0]-speed
+    y = square[1]
+    txt = 'Score: ' + str(score)
+    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+    cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
+    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+    square = (x,y)
+
+def move_right():
+    global square, score, speed
+    
+    x = square[0]+speed
+    y = square[1]
+    txt = 'Score: ' + str(score)
+    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+    cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
+    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+    square = (x,y)
+
+def line(x1, y1, x2, y2, b, g, r):
+    cv2.line(img,(x1,y1),(x2,y2),(b,g,r))
+
+def bonus():
+    global multiplier, multi_count, line_count, lines_up, drop_count, drop_speed
+    
+    if multiplier == 2:
+        multi_count += 1
+        if multi_count == 1000:
+            multiplier = 1
+            multi_count = 0
+
+    if lines_up:
+        line_count += 1
+        if line_count == 750:
+            lines_up = False
+
+    if drop_speed == 7:
+        drop_count += 1
+        if drop_count == 500:
+            drop_count = 0
+            drop_speed = 5
+            
+up = 2490368
+left = 2424832
+down = 2621440
+right = 2555904
+frequency = 0
+
+img = np.zeros((1024,1024,3), np.uint8)
+cv2.namedWindow('image')
+cv2.rectangle(img,(500,1000),(524,1024),(0,255,0),-1)
+cv2.putText(img,'Score: 0',(0,0), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+
+while 1:
+
+    cv2.imshow('image',img)
+    k = cv2.waitKey(1)
+    bonus()
+    fall()
+    
+    if not frequency:
+        drop()
+    elif frequency == 5:
+        frequency = -1
+    
+    if k == left:
+        move_left()
+    elif k == right:
+        move_right()
+    elif k == 27:
+        break
+    frequency += 1
+cv2.destroyAllWindows()
