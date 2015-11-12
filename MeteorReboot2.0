@@ -20,13 +20,16 @@ def intersect(square1):
     
     if abs(square1[0]-square[0]) < 18 and abs(square1[1]-square[1]) < 18:
         if square1[2] == 1:
+            drop_speed = 7
+            
+        elif square1[2] == 2:
             multi_count = 0
             multiplier = 2
-        elif square1[2] == 2:
+            
+        elif square1[2] == 3:
             line_count = 0
             lines_up = True
-        elif square1[2] == 3:
-            drop_speed = 7
+            
         else:
             return True
     return False    
@@ -36,32 +39,31 @@ def drop():
     
     c = randint(1,1024)
     score += (1*multiplier)
-    if c%50 == 0:
-        typ = 3
-    elif c%30 == 0:
+
+    fill = 1    #1 is hollow -1 is filled
+    #Determines type of block to fall
+    if c%50 == 0:   #Speed up
         typ = 1
-    elif c%20 == 0:
-        typ = 2
-    else:
-        typ = 0
+        color = (0,0,255)
+        fill = -1
         
-    if typ == 1:    #Bonus
-        cv2.rectangle(img,(c-6,0),(c+6,12),(255,255,255),1)
-        if lines_up == True:
-            line(c-6, 0, square[0], square[1], 255, 255, 255)
-    elif typ == 2:  #Lines
-        cv2.rectangle(img,(c-6,0),(c+6,12),(232,226,61),1)
-        if lines_up == True:
-            cv2.rectangle(img,(c-6,0),(c+6,12),(232,226,61),1)
-    elif typ == 3:  #Lines
-        cv2.rectangle(img,(c-6,0),(c+6,12),(0,0,255),-1)
-        if lines_up == True:
-            cv2.rectangle(img,(c-6,0),(c+6,12),(0,0,255),1)
-    else:   #Normal
-        cv2.rectangle(img,(c-6,0),(c+6,12),(255,0,255),1)
-        if lines_up == True:
-            cv2.rectangle(img,(c-6,0),(c+6,12),(255,0,255),1)
-    squares.append([c,6,typ])
+    elif c%30 == 0: #2x Points
+        typ = 2
+        color = (255,255,255)
+        
+    elif c%20 == 0: #Lines
+        typ = 3
+        color = (232,236,61)
+        
+    else: #Normal
+        typ = 0
+        color = (255,0,255)
+        
+    cv2.rectangle(img,(c-6,0),(c+6,12),color,fill)
+    if lines_up == True:
+        line(c-6, 0, square[0], square[1], color[0],color[1],color[2])
+
+    squares.append([c,6,typ, color, fill])
     
 def fall():
     global squares, square, score
@@ -87,22 +89,11 @@ def fall():
             
         if y < 1030:
             squares[i][1] += drop_speed
-            if squares[i][2] == 1:
-                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(255,255,255),1)
-                if lines_up:
-                    line(x,y,square[0], square[1],255,255,255)
-            elif squares[i][2] == 2:  #Lines
-                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(232,226,61),1)
-                if lines_up == True:
-                    line(x,y,square[0], square[1],232,226,61)
-            elif squares[i][2] == 3:  #Lines
-                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(0,0,255),-1)
-                if lines_up == True:
-                    line(x,y,square[0], square[1],0,0,255)
-            else:
-                cv2.rectangle(img,(x-6, y-4),(x+6,y+8),(255,0,255),1)
-                if lines_up:
-                    line(x,y,square[0], square[1],255,0,255)
+            color = squares[i][3]
+            fill = squares[i][4]
+            cv2.rectangle(img,(x-6, y-4),(x+6,y+8),color,fill)
+            if lines_up:
+                line(x,y,square[0], square[1],color[0],color[1],color[2])
         else:
             count += 1
             del squares[i]
