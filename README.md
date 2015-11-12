@@ -11,4 +11,6 @@ Blue blocks = lines from green block to all others
 
 Purple blocks = Dodge at all costs
 
+esc to quit
+
 Uses python 2.7
