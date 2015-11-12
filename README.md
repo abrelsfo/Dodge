@@ -10,3 +10,5 @@ Red blocks = faster fall speed
 Blue blocks = lines from green block to all others
 
 Purple blocks = Dodge at all costs
+
+Uses python 2.7
