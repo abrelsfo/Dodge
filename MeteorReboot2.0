@@ -7,7 +7,6 @@ import time
 squares = []
 square = (512,1012)
 score = 0
-speed = 8
 multiplier = 1
 multi_count = 0
 line_count = 0
