@@ -14,3 +14,8 @@ Purple blocks = Dodge at all costs
 esc to quit
 
 Uses python 2.7
+
+This program needs openCV and Numpy to run. You can download OpenCV from this link: http://opencv.org/downloads.html
+
+Numpy you can use pip -install numpy and that should be all you need. 
+
