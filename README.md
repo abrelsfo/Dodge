@@ -1,17 +1,17 @@
 # MeteorReboot2.0
 Recreated a game I helped make in high school with a few extra features that weren't in the original.
 
-Left and Right arrow keys to move.
+Use the Left and Right arrow keys to move.
 
-White blocks = 2x score
+The white blocks are 2x score
 
-Red blocks = faster fall speed
+The red blocks speed up the falling blocks
 
-Blue blocks = lines from green block to all others
+The blue blocks draw lines from from each falling block to your block
 
-Purple blocks = Dodge at all costs
+Dodge the purple blocks at all time.
 
-esc to quit
+press esc to quit
 
 Uses python 2.7
 
