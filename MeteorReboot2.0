@@ -26,7 +26,7 @@ def intersect(square1):
             multi_count = 0
             multiplier = 2
             
-        elif square1[2] == 3:
+        elif square1[2] == 3:        
             line_count = 0
             lines_up = True
             
@@ -37,10 +37,10 @@ def intersect(square1):
 def drop():
     global img, squares, lines_up, score
     
-    c = randint(1,1024)
+    c = randint(0,1025)
     
-
     fill = 1    #1 is hollow -1 is filled
+
     #Determines type of block to fall
     if c%50 == 0:   #Speed up
         typ = 1
@@ -80,7 +80,7 @@ def fall():
         i = i-count
         x = squares[i][0]
         y = squares[i][1]
-
+        
         if intersect(squares[i]):
             print("Game Over")
             print('Score: ' + str(score))
@@ -89,12 +89,13 @@ def fall():
             
             cv2.putText(img,txt,(420,512), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
             cv2.imshow('image',img)
-            cv2.waitKey(0)
-            
+            k = cv2.waitKey(0)
+            while k in [2490368, 2424832, 2621440, 2555904]:
+                k = cv2.waitKey(0)
             return True
             
         if y < 1030:
-            squares[i][1] += drop_speed + (score/100)
+            squares[i][1] += drop_speed + int(score/100)
             color = squares[i][3]
             fill = squares[i][4]
             cv2.rectangle(img,(x-6, y-4),(x+6,y+8),color,fill)
@@ -112,6 +113,8 @@ def move_left():
     
     x = square[0]-8-(score/100)
     y = square[1]
+    if x < 8:
+        return
     txt = 'Score: ' + str(score)
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
     cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
@@ -123,6 +126,8 @@ def move_right():
     
     x = square[0]+8+(score/100)
     y = square[1]
+    if x > 1016:
+        return
     txt = 'Score: ' + str(score)
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
     cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
@@ -138,18 +143,18 @@ def bonus():
     
     if multiplier == 2:
         multi_count += 1
-        if multi_count == 1000:
+        if multi_count >= 1000:
             multiplier = 1
             multi_count = 0
 
     if lines_up:
         line_count += 1
-        if line_count == 750:
+        if line_count >= 750:
             lines_up = False
 
-    if drop_speed == 7+(score/100):
+    if drop_speed == 7+int(score/100):
         drop_count += 1
-        if drop_count == 500:
+        if drop_count >= 500:
             drop_count = 0
             drop_speed = 5
 
@@ -188,7 +193,7 @@ def start():
         
         if not frequency:
             drop()
-        elif frequency == 5:
+        elif frequency >= (5-int(score/500)):
             frequency = -1
         
         if k == left:
