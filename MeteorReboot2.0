@@ -222,7 +222,7 @@ def get_user():
         elif k != 13:
             user += chr(k)
         s = 'User: ' + user
-   user = user[0].uppercase() + user[1:]    
+   user = user[0].upper() + user[1:]    
         
 def start():
     global img, squares, square, score, multiplier, multi_count, line_count, lines_up, drop_speed, drop_count, user
