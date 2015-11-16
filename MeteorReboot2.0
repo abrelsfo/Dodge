@@ -18,16 +18,15 @@ lines_up = False
 drop_speed = 5
 drop_count = 0
 img = np.zeros((1024,1024,3), np.uint8)
-highscores = 'path/highscores.txt' #Change to the directory of your choosing
 
 def highscores():
     global img, fscore, highscores
     
-    with FileLock(highscores):
-        with open(highscores, 'r+') as f:
+    with FileLock('path/highscores.txt'):   #Change path to directory of your choosing
+        with open('path/highscores.txt', 'r+') as f:    #Change path to directory of your choosing
             d = defaultdict(list)
             scores = []
-            if os.stat(highscores).st_size != 0:   
+            if os.stat('path/highscores.txt').st_size != 0:   #Change path to directory of your choosing
                 for i in f:
                     fuser, fscore = i.replace('\n','').split()
                     fscore = int(fscore)
