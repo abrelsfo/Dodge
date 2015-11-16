@@ -1,9 +1,13 @@
+from collections import *
+from filelock import FileLock
 from random import randint
 import numpy as np
 import cv2
 import sys
 import time
+import os
 
+user = ''
 squares = []
 square = (512,1012)
 score = 0
@@ -14,7 +18,56 @@ lines_up = False
 drop_speed = 5
 drop_count = 0
 img = np.zeros((1024,1024,3), np.uint8)
+highscores = 'path/highscores.txt' #Change to the directory of your choosing
 
+def highscores():
+    global img, fscore, highscores
+    
+    with FileLock(highscores):
+        with open(highscores, 'r+') as f:
+            d = defaultdict(list)
+            scores = []
+            if os.stat(highscores).st_size != 0:   
+                for i in f:
+                    fuser, fscore = i.replace('\n','').split()
+                    fscore = int(fscore)
+                    d[fscore].append(fuser)
+                    scores.append(fscore)
+                scores.sort()
+            
+            
+            scores.sort()
+            if len(scores) == 0 or score > scores[-1]:
+                txt = 'New High Score! ' + str(score)
+                print txt
+                cv2.putText(img,txt,(358,256), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+            else:
+                txt = 'Score: ' + str(score)
+                print txt
+                cv2.putText(img,txt,(420,256), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+                
+            scores.append(score)
+            d[score].append(user)    
+            scores.sort()        
+
+            if len(scores) > 10:
+                del d[scores[0]]
+                del scores[0]
+            
+            f.seek(0)
+            f.truncate()
+            count = 0
+            d = OrderedDict(sorted(d.items(), reverse = True))
+            for k,v in d.items():
+                for i in v:
+                    count += 30
+                    s = i + ' ' + str(k)
+                    txt = "{:10} {:>6}".format(i, k)
+                    cv2.putText(img,txt,(390,512+count), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+                    f.write(s + '\n')
+                
+            
+        
 def intersect(square1):
     global img, multiplier, multi_count, line_count, lines_up, drop_speed
     
@@ -82,12 +135,8 @@ def fall():
         y = squares[i][1]
         
         if intersect(squares[i]):
-            print("Game Over")
-            print('Score: ' + str(score))
+            highscores()
             
-            cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
-            
-            cv2.putText(img,txt,(420,512), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
             cv2.imshow('image',img)
             k = cv2.waitKey(0)
             while k in [2490368, 2424832, 2621440, 2555904]:
@@ -158,9 +207,25 @@ def bonus():
             drop_count = 0
             drop_speed = 5
 
-
+def get_user():
+    global user
+    
+    k = 0
+    s = 'User: '
+    while k != 13: 
+        cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+        cv2.putText(img,s,(420,256), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+        cv2.imshow('image',img)
+        k = cv2.waitKey(0)
+        if k == 8:
+            user = user[:-1]
+        elif k != 13:
+            user += chr(k)
+        s = 'User: ' + user
+   user = user[0].uppercase() + user[1:]    
+        
 def start():
-    global img, squares, square, score, multiplier, multi_count, line_count, lines_up, drop_speed, drop_count
+    global img, squares, square, score, multiplier, multi_count, line_count, lines_up, drop_speed, drop_count, user
 
     squares = []
     square = (512,1012)
@@ -176,12 +241,13 @@ def start():
     down = 2621440
     right = 2555904
     frequency = 0
-
+    if user == '':
+        get_user()
     
     cv2.namedWindow('image')
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
     cv2.rectangle(img,(500,1000),(524,1024),(0,255,0),-1)
-    cv2.putText(img,'Score: 0',(0,0), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+    cv2.putText(img,'Score: 0',(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 
     while 1:
 
