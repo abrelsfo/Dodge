@@ -20,7 +20,7 @@ drop_count = 0
 img = np.zeros((1024,1024,3), np.uint8)
 
 def highscores():
-    global img, fscore, highscores
+    global img, fscore
     
     with FileLock('path/highscores.txt'):   #Change path to directory of your choosing
         with open('path/highscores.txt', 'r+') as f:    #Change path to directory of your choosing
