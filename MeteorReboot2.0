@@ -17,16 +17,17 @@ line_count = 0
 lines_up = False
 drop_speed = 5
 drop_count = 0
-img = np.zeros((1024,1024,3), np.uint8)
+drop_bool = False
+img = np.zeros((900,1024,3), np.uint8)
 
 def highscores():
-    global img, fscore
-    
-    with FileLock('path/highscores.txt'):   #Change path to directory of your choosing
-        with open('path/highscores.txt', 'r+') as f:    #Change path to directory of your choosing
+    global img, fscore, highscores
+    cv2.rectangle(img,(0,0),(900,1024),(0,0,0),-1)
+    with FileLock('path/highscores.txt'):
+        with open('path/highscores.txt', 'r+') as f:
             d = defaultdict(list)
             scores = []
-            if os.stat('path/highscores.txt').st_size != 0:   #Change path to directory of your choosing
+            if os.stat('path/highscores.txt').st_size != 0:   
                 for i in f:
                     fuser, fscore = i.replace('\n','').split()
                     fscore = int(fscore)
@@ -61,30 +62,34 @@ def highscores():
                 for i in v:
                     count += 30
                     s = i + ' ' + str(k)
-                    txt = "{:10} {:>6}".format(i, k)
+                    txt = "{:10}{:6}".format(i, k)
                     cv2.putText(img,txt,(390,512+count), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
                     f.write(s + '\n')
                 
             
         
 def intersect(square1):
-    global img, multiplier, multi_count, line_count, lines_up, drop_speed
+    global img, multiplier, multi_count, line_count, lines_up, drop_speed, drop_bool
     
     if abs(square1[0]-square[0]) < 18 and abs(square1[1]-square[1]) < 18:
         if square1[2] == 1:
+            drop_bool = True
             drop_speed = 7
-            
+            return 1
         elif square1[2] == 2:
             multi_count = 0
-            multiplier = 2
-            
+            if multiplier == 1:
+                multiplier += 1
+            else:
+                multiplier += 2
+            return 1
         elif square1[2] == 3:        
             line_count = 0
             lines_up = True
-            
+            return 1
         else:
-            return True
-    return False    
+            return 2
+    return 0    
  
 def drop():
     global img, squares, lines_up, score
@@ -113,8 +118,7 @@ def drop():
         
     cv2.rectangle(img,(c-6,0),(c+6,12),color,fill)
     if lines_up == True:
-        line(c-6, 0, square[0], square[1], color[0],color[1],color[2])
-
+        cv2.line(img, (c-6,0),(square[0], square[1]),(color[0],color[1],color[2]))
     squares.append([c,6,typ, color, fill])
     
 def fall():
@@ -123,17 +127,14 @@ def fall():
     x = square[0]
     y = square[1]
     count = 0
-    txt = 'Score: ' + str(score)
-    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
     cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
-    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
     
     for i in xrange(len(squares)):
         i = i-count
         x = squares[i][0]
         y = squares[i][1]
-        
-        if intersect(squares[i]):
+        r = intersect(squares[i])
+        if r == 2:
             highscores()
             
             cv2.imshow('image',img)
@@ -141,14 +142,18 @@ def fall():
             while k in [2490368, 2424832, 2621440, 2555904]:
                 k = cv2.waitKey(0)
             return True
+        elif r == 1:
+            count += 1
+            score += (1*multiplier)
+            del squares[i]
             
-        if y < 1030:
+        if y < 906:
             squares[i][1] += drop_speed + int(score/100)
             color = squares[i][3]
             fill = squares[i][4]
             cv2.rectangle(img,(x-6, y-4),(x+6,y+8),color,fill)
             if lines_up:
-                line(x,y,square[0], square[1],color[0],color[1],color[2])
+                cv2.line(img, (x,y),(square[0], square[1]),(color[0],color[1],color[2]))
         else:
             count += 1
             score += (1*multiplier)
@@ -163,10 +168,7 @@ def move_left():
     y = square[1]
     if x < 8:
         return
-    txt = 'Score: ' + str(score)
-    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
     cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
-    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
     square = (x,y)
 
 def move_right():
@@ -176,33 +178,32 @@ def move_right():
     y = square[1]
     if x > 1016:
         return
-    txt = 'Score: ' + str(score)
-    cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+    
     cv2.rectangle(img,(x-12,y-12),(x+12,y+12),(0,255,0),-1)
-    cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
     square = (x,y)
 
-def line(x1, y1, x2, y2, b, g, r):
-    global img
-    cv2.line(img,(x1,y1),(x2,y2),(b,g,r))
-
 def bonus():
-    global img, multiplier, multi_count, line_count, lines_up, drop_count, drop_speed, score
+    global img, multiplier, multi_count, line_count, lines_up, drop_count, drop_speed, score, drop_bool
     
-    if multiplier == 2:
+    if multiplier != 1:
+        cv2.rectangle(img,(0,30),(40,40),(255,255,255),-1)
         multi_count += 1
         if multi_count >= 1000:
             multiplier = 1
             multi_count = 0
 
     if lines_up:
+        cv2.rectangle(img,(50,30),(90,40),(232,236,61),-1)
         line_count += 1
         if line_count >= 750:
             lines_up = False
 
-    if drop_speed == 7+int(score/100):
+    if drop_bool:
+        drop_speed = 7
+        cv2.rectangle(img,(100,30),(140,40),(0,0,255),-1)
         drop_count += 1
         if drop_count >= 500:
+            drop_bool = False
             drop_count = 0
             drop_speed = 5
 
@@ -218,16 +219,15 @@ def get_user():
         k = cv2.waitKey(0)
         if k == 8:
             user = user[:-1]
-        elif k != 13:
+        elif k != 13 and k != 32:
             user += chr(k)
         s = 'User: ' + user
-   user = user[0].upper() + user[1:]    
-        
+            
 def start():
-    global img, squares, square, score, multiplier, multi_count, line_count, lines_up, drop_speed, drop_count, user
+    global img, squares, square, score, multiplier, multi_count, line_count, lines_up, drop_speed, drop_count, user, drop_bool
 
     squares = []
-    square = (512,1012)
+    square = (512,888)
     score = 0
     multiplier = 1
     multi_count = 0
@@ -235,6 +235,7 @@ def start():
     lines_up = False
     drop_speed = 5
     drop_count = 0
+    drop_bool = False
     up = 2490368
     left = 2424832
     down = 2621440
@@ -245,13 +246,16 @@ def start():
     
     cv2.namedWindow('image')
     cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
-    cv2.rectangle(img,(500,1000),(524,1024),(0,255,0),-1)
+    cv2.rectangle(img,(500,876),(524,900),(0,255,0),-1)
     cv2.putText(img,'Score: 0',(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
 
     while 1:
 
         cv2.imshow('image',img)
         k = cv2.waitKey(1)
+        txt = 'Score: ' + str(score)
+        cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
+        cv2.putText(img,txt,(0,24), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
         bonus()
         if fall():
             break
@@ -276,7 +280,7 @@ def main():
         
         cv2.namedWindow('image')
         cv2.rectangle(img,(0,0),(1024,1024),(0,0,0),-1)
-        cv2.putText(img,'Start(y/n)',(435,512), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
+        cv2.putText(img,'Start(y/n)',(435,430), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
         cv2.imshow('image',img)
         k = cv2.waitKey(0)
         if k == ord('y'):
