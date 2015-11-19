@@ -23,11 +23,11 @@ img = np.zeros((900,1024,3), np.uint8)
 def highscores():
     global img, fscore, highscores
     cv2.rectangle(img,(0,0),(900,1024),(0,0,0),-1)
-    with FileLock('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt'):
-        with open('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt', 'r+') as f:
+    with FileLock('Change_path_to_your_directory/highscores.txt'):
+        with open('Change_path_to_your_directory/highscores.txt', 'r+') as f:
             d = defaultdict(list)
             scores = []
-            if os.stat('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt').st_size != 0:   
+            if os.stat('Change_path_to_your_directory/highscores.txt').st_size != 0:   
                 for i in f:
                     fuser, fscore = i.replace('\n','').split()
                     fscore = int(fscore)
