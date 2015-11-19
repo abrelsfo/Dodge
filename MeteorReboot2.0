@@ -39,11 +39,11 @@ def highscores():
             scores.sort()
             if len(scores) == 0 or score > scores[-1]:
                 txt = 'New High Score! ' + str(score)
-                print txt
+                print(txt)
                 cv2.putText(img,txt,(358,256), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
             else:
                 txt = 'Score: ' + str(score)
-                print txt
+                print(txt)
                 cv2.putText(img,txt,(420,256), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
                 
             scores.append(score)
