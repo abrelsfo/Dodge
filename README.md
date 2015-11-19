@@ -1,27 +1,30 @@
 # MeteorReboot2.0
 Recreated a game I helped make in high school with a few extra features that weren't in the original.
 
-Use the Left and Right arrow keys to move.
+**How To Play**<br>
+Left and Right arrow keys to move.
 
-The white blocks are 2x score and stack
+Each block that you miss is one point
 
-The red blocks speed up the falling blocks
+White blocks are 2x score multipliers that stack
 
-The blue blocks draw lines from from each falling block to your block
+Red blocks speed up the falling blocks
 
-Dodge the purple blocks at all time.
+Blue blocks draw lines from your block to each falling block
 
-press esc to quit
+Dodge the purple blocks.
 
-Uses python 2.7
+Esc to quit
 
-This program needs openCV and Numpy to run. You can download OpenCV from this [link](http://opencv.org/downloads.html)
+**Installation**<br>
+Uses python 2.7 but should be compatible for python 3.3
 
-Numpy you can use pip -install numpy and that should be all you need. 
+This program needs openCV, lazyflow, and Numpy to run.
 
-The filelocking module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py)
+You can download OpenCV from this [link](http://opencv.org/downloads.html)<br>
+Use pip -install numpy to install numpy<br>
+The lazyflow module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py)
 
-Change the path under the highscores function to your local directory.
-
-Lastly create a highscores txt file in the directory you chose
+Under the highscores function you will need to change the path directory to your own.<br>
+Lastly create a highscores.txt file in the directory you chose
 
