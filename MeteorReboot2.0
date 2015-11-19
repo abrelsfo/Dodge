@@ -23,11 +23,11 @@ img = np.zeros((900,1024,3), np.uint8)
 def highscores():
     global img, fscore, highscores
     cv2.rectangle(img,(0,0),(900,1024),(0,0,0),-1)
-    with FileLock('path/highscores.txt'):
-        with open('path/highscores.txt', 'r+') as f:
+    with FileLock('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt'):
+        with open('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt', 'r+') as f:
             d = defaultdict(list)
             scores = []
-            if os.stat('path/highscores.txt').st_size != 0:   
+            if os.stat('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt').st_size != 0:   
                 for i in f:
                     fuser, fscore = i.replace('\n','').split()
                     fscore = int(fscore)
@@ -77,9 +77,10 @@ def intersect(square1):
             drop_speed = 7
             return 1
         elif square1[2] == 2:
-            multi_count = 0
+            multi_count += 500
+            
             if multiplier == 1:
-                multiplier += 1
+                multiplier += 1    
             else:
                 multiplier += 2
             return 1
@@ -134,6 +135,7 @@ def fall():
         x = squares[i][0]
         y = squares[i][1]
         r = intersect(squares[i])
+
         if r == 2:
             highscores()
             
@@ -142,22 +144,18 @@ def fall():
             while k in [2490368, 2424832, 2621440, 2555904]:
                 k = cv2.waitKey(0)
             return True
-        elif r == 1:
+        elif r == 1 or y >= 906:
             count += 1
             score += (1*multiplier)
             del squares[i]
             
-        if y < 906:
+        else:
             squares[i][1] += drop_speed + int(score/100)
             color = squares[i][3]
             fill = squares[i][4]
             cv2.rectangle(img,(x-6, y-4),(x+6,y+8),color,fill)
             if lines_up:
                 cv2.line(img, (x,y),(square[0], square[1]),(color[0],color[1],color[2]))
-        else:
-            count += 1
-            score += (1*multiplier)
-            del squares[i]
 
     return False
 
@@ -187,11 +185,13 @@ def bonus():
     
     if multiplier != 1:
         cv2.rectangle(img,(0,30),(40,40),(255,255,255),-1)
-        multi_count += 1
-        if multi_count >= 1000:
-            multiplier = 1
+        multi_count -= 1
+        if multi_count%500 == 0:
+            multiplier -= 2
             multi_count = 0
-
+            
+        if multiplier < 1:
+            multiplier = 1
     if lines_up:
         cv2.rectangle(img,(50,30),(90,40),(232,236,61),-1)
         line_count += 1
