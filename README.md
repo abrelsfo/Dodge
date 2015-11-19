@@ -3,7 +3,7 @@ Recreated a game I helped make in high school with a few extra features that wer
 
 Use the Left and Right arrow keys to move.
 
-The white blocks are 2x score
+The white blocks are 2x score and stack
 
 The red blocks speed up the falling blocks
 
