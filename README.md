@@ -17,7 +17,7 @@ This program needs openCV, lazyflow, and Numpy to run.
 
 You can download OpenCV from this [link](http://opencv.org/downloads.html)<br>
 Use pip -install numpy to install numpy<br>
-The lazyflow module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py)
+The lazyflow module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py). Add this to the same directory that you place MeteorReboot2.0 in
 
 Under the highscores function you will need to change the path directory to your own.<br>
 Lastly create a highscores.txt file in the directory you chose
