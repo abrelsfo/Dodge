@@ -15,11 +15,12 @@ press esc to quit
 
 Uses python 2.7
 
-This program needs openCV and Numpy to run. You can download OpenCV from this link: http://opencv.org/downloads.html
+This program needs openCV and Numpy to run. You can download OpenCV from this [link](http://opencv.org/downloads.html)
 
 Numpy you can use pip -install numpy and that should be all you need. 
 
 The filelocking module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py)
+
 Change the path under the highscores function to your local directory.
 
 Lastly create a highscores txt file in the directory you chose
