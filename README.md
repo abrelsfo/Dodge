@@ -13,10 +13,10 @@ Recreated a game I helped make in high school with a few extra features that wer
 **Installation**<br>
 Uses python 2.7 but should be compatible for python 3.3
 
-This program needs openCV, lazyflow, and Numpy to run.
+This program needs Pygame, lazyflow, and eztext to run.
 
-You can download OpenCV from this [link](http://opencv.org/downloads.html)<br>
-Use pip -install numpy to install numpy<br>
+Use pip -install pygame to install the 32 bit version of pygame<br>
+You can download the 64 bit binary of pygame from this [link](http://www.lfd.uci.edu/~gohlke/pythonlibs/)<br>
 The lazyflow module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py). Add this to the same directory that you place MeteorReboot2.0 in if you don't want to add it to your path
 
 Under the highscores function you will need to change the path directory to your own.<br>
