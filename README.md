@@ -18,7 +18,7 @@ This program needs Pygame, lazyflow, and eztext to run.
 -Use pip -install pygame to install the 32 bit version of pygame<br>
 -You can download the 64 bit binary of pygame from this [link](http://www.lfd.uci.edu/~gohlke/pythonlibs/)<br>
 -The lazyflow module can be found on github [here](https://github.com/ilastik/lazyflow/blob/master/lazyflow/utility/fileLock.py).<br>
-<t>-Add this to python modules directory generally found at C:\Python27\Lib\site-packages
+&nbsp;&nbsp;&nbsp;&nbsp;-Add this to python modules directory generally found at C:\Python27\Lib\site-packages
 
 Lastly create a highscores.txt file in the directory of your choosing.<br>
 Under the highscores function you will need to change the path directory to wherever you created your highscores text file.<br>
