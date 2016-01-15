@@ -39,7 +39,7 @@ def highscores():
             d = defaultdict(list)
             scores = []
             if os.stat('//tester-hist-203/TD/_Associates/Alex/Dodge/highscores.txt').st_size != 0:   
-                scores = get_scores(f)
+                scores, d = get_scores(f,d,scores)
                 
             if len(scores) == 0 or score > scores[-1]:
                 txt = 'New High Score! ' + str(score)
@@ -78,14 +78,14 @@ def highscores():
             return
         pygame.event.pump()
 
-def get_scores(f):
+def get_scores(f,d,scores):
     for i in f:
         fuser, fscore = i.replace('\n','').split()
         fscore = int(fscore)
         d[fscore].append(fuser)
         scores.append(fscore)
     scores.sort()
-    return scores
+    return scores, d
 
 def move_right(pressed):
     global x
